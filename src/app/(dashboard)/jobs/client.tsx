@@ -6,7 +6,6 @@ import Topbar from "@/components/dashboard/Topbar";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import Select from "@/components/ui/Select";
 import EmptyState from "@/components/ui/EmptyState";
 import JobStatusBadge from "@/components/jobs/JobStatusBadge";
 import { cn, formatDate, getPriorityColor, getCategoryLabel } from "@/lib/utils";
@@ -15,6 +14,38 @@ import type { Job, JobStatus, JobCategory, JobPriority } from "@/types";
 interface JobsClientProps {
   jobs: (Job & { clients?: { name: string } | null })[];
 }
+
+const statusOptions: { value: JobStatus | "all"; label: string }[] = [
+  { value: "all", label: "All Statuses" },
+  { value: "received", label: "Received" },
+  { value: "diagnosed", label: "Diagnosed" },
+  { value: "in_progress", label: "In Progress" },
+  { value: "quality_check", label: "Quality Check" },
+  { value: "ready", label: "Ready" },
+  { value: "delivered", label: "Delivered" },
+  { value: "cancelled", label: "Cancelled" },
+];
+
+const categoryOptions: { value: JobCategory | "all"; label: string }[] = [
+  { value: "all", label: "All Categories" },
+  { value: "general", label: "General" },
+  { value: "consulting", label: "Consulting" },
+  { value: "design", label: "Design" },
+  { value: "development", label: "Development" },
+  { value: "marketing", label: "Marketing" },
+  { value: "writing", label: "Writing" },
+  { value: "financial", label: "Financial" },
+  { value: "legal", label: "Legal" },
+  { value: "repair", label: "Repair" },
+  { value: "maintenance", label: "Maintenance" },
+  { value: "cleaning", label: "Cleaning" },
+  { value: "photography", label: "Photography" },
+  { value: "education", label: "Education" },
+  { value: "health", label: "Health" },
+  { value: "logistics", label: "Logistics" },
+  { value: "event", label: "Event" },
+  { value: "other", label: "Other" },
+];
 
 export default function JobsClient({ jobs }: JobsClientProps) {
   const [search, setSearch] = useState("");
@@ -34,63 +65,39 @@ export default function JobsClient({ jobs }: JobsClientProps) {
     <div>
       <Topbar />
       <main className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="font-serif text-2xl font-bold text-[var(--text-primary)]">Jobs</h1>
-          <Link href="/jobs/new"><Button>New Job</Button></Link>
-        </div>
+        <h1 className="font-serif text-2xl font-bold text-[var(--text-primary)]">Jobs</h1>
 
-        <Card className="p-4">
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex-1 min-w-[200px]">
-              <Input
-                placeholder="Search by job #, title, or client..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>}
-              />
-            </div>
-            <Select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
-              options={[
-                { value: "all", label: "All Statuses" },
-                { value: "received", label: "Received" },
-                { value: "diagnosed", label: "Diagnosed" },
-                { value: "in_progress", label: "In Progress" },
-                { value: "quality_check", label: "Quality Check" },
-                { value: "ready", label: "Ready" },
-                { value: "delivered", label: "Delivered" },
-                { value: "cancelled", label: "Cancelled" },
-              ]}
-              className="w-40"
-            />
-            <Select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value as any)}
-              options={[
-                { value: "all", label: "All Categories" },
-                { value: "general", label: "General" },
-                { value: "consulting", label: "Consulting" },
-                { value: "design", label: "Design" },
-                { value: "development", label: "Development" },
-                { value: "marketing", label: "Marketing" },
-                { value: "writing", label: "Writing" },
-                { value: "financial", label: "Financial" },
-                { value: "legal", label: "Legal" },
-                { value: "repair", label: "Repair" },
-                { value: "maintenance", label: "Maintenance" },
-                { value: "cleaning", label: "Cleaning" },
-                { value: "photography", label: "Photography" },
-                { value: "education", label: "Education" },
-                { value: "health", label: "Health" },
-                { value: "logistics", label: "Logistics" },
-                { value: "event", label: "Event" },
-                { value: "other", label: "Other" },
-              ]}
-              className="w-40"
+        {/* Horizontal filter toolbar */}
+        <div className="w-full flex items-center justify-between gap-4">
+          <div className="max-w-md w-full">
+            <Input
+              placeholder="Search by job #, title, or client..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>}
             />
           </div>
-        </Card>
+          <div className="flex items-center gap-3">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as any)}
+              className="bg-white border border-zinc-200 text-sm px-4 py-2.5 rounded-xl text-zinc-600 focus:outline-none focus:border-blue-500 appearance-none cursor-pointer"
+            >
+              {statusOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value as any)}
+              className="bg-white border border-zinc-200 text-sm px-4 py-2.5 rounded-xl text-zinc-600 focus:outline-none focus:border-blue-500 appearance-none cursor-pointer"
+            >
+              {categoryOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         {filtered.length === 0 ? (
           <Card className="p-6">
