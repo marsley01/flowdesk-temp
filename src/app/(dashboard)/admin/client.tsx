@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Topbar from "@/components/dashboard/Topbar";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import Modal from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
 import { formatKES, formatDate } from "@/lib/utils";
 import { Trash, Plus, X } from "@phosphor-icons/react";
@@ -34,7 +36,10 @@ export default function AdminClient({
   const [showAdd, setShowAdd] = useState(false);
   const [adding, setAdding] = useState(false);
   const [newBiz, setNewBiz] = useState({ name: "", email: "", password: "", city: "Nairobi" });
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+
+  const [deleteTarget, setDeleteTarget] = useState<AdminBusiness | null>(null);
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   const handleAdd = async () => {
     setAdding(true);
@@ -56,19 +61,24 @@ export default function AdminClient({
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
       const res = await fetch("/api/admin/businesses", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ business_id: id }),
+        body: JSON.stringify({ business_id: deleteTarget.id }),
       });
       if (!res.ok) { const e = await res.json(); throw new Error(e.error); }
       addToast("Business removed", "success");
-      setConfirmDelete(null);
+      setDeleteTarget(null);
+      setConfirmText("");
       router.refresh();
     } catch (err: any) {
       addToast(err.message, "error");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -92,7 +102,7 @@ export default function AdminClient({
             { label: "Total Invoices", value: totalInvoices.toString() },
             { label: "Total Revenue", value: formatKES(totalRevenue) },
           ].map((s) => (
-            <div key={s.label} className="bg-white rounded-xl border border-zinc-100 p-4 shadow-sm">
+            <div key={s.label} className="bg-white rounded-2xl border border-zinc-100 p-4 shadow-sm">
               <p className="text-xs text-[var(--text-muted)] font-medium">{s.label}</p>
               <p className="text-xl font-semibold text-[var(--text-primary)] mt-1 [font-variant-numeric:tabular-nums]">{s.value}</p>
             </div>
@@ -101,7 +111,7 @@ export default function AdminClient({
 
         {/* Add form */}
         {showAdd && (
-          <div className="bg-white rounded-xl border border-zinc-100 p-5 shadow-sm space-y-4">
+          <div className="bg-white rounded-2xl border border-zinc-100 p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">New Business</h2>
               <button onClick={() => setShowAdd(false)} className="text-zinc-400 hover:text-zinc-600">
@@ -122,7 +132,7 @@ export default function AdminClient({
         )}
 
         {/* Businesses table */}
-        <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
@@ -138,35 +148,25 @@ export default function AdminClient({
               <tbody>
                 {businesses.map((b) => (
                   <tr key={b.id} className="border-b border-zinc-50 hover:bg-zinc-50/40 transition-colors">
-                    <td className="py-3 px-5 font-medium text-zinc-800">{b.name}</td>
+                    <td className="py-3 px-5">
+                      <Link
+                        href={`/admin/businesses/${b.id}`}
+                        className="text-zinc-900 hover:text-blue-600 font-semibold cursor-pointer transition-colors"
+                      >
+                        {b.name}
+                      </Link>
+                    </td>
                     <td className="py-3 px-5 text-zinc-500">{b.email}</td>
                     <td className="py-3 px-5 text-zinc-500">{b.city}</td>
                     <td className="py-3 px-5 text-zinc-500">{b.user_count}</td>
                     <td className="py-3 px-5 text-zinc-500">{formatDate(b.created_at)}</td>
                     <td className="py-3 px-5 text-right">
-                      {confirmDelete === b.id ? (
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => setConfirmDelete(null)}
-                            className="text-xs text-zinc-400 hover:text-zinc-600 px-2 py-1"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={() => handleDelete(b.id)}
-                            className="text-xs text-red-500 hover:text-red-600 font-medium px-2 py-1"
-                          >
-                            Confirm delete
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => setConfirmDelete(b.id)}
-                          className="text-zinc-400 hover:text-red-500 transition-colors p-1"
-                        >
-                          <Trash size={15} />
-                        </button>
-                      )}
+                      <button
+                        onClick={() => { setDeleteTarget(b); setConfirmText(""); }}
+                        className="text-zinc-400 hover:text-red-500 transition-colors p-1"
+                      >
+                        <Trash size={15} />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -178,6 +178,49 @@ export default function AdminClient({
           )}
         </div>
       </main>
+
+      {/* Delete confirmation modal */}
+      <Modal isOpen={!!deleteTarget} onClose={() => { setDeleteTarget(null); setConfirmText(""); }} title="Delete Business">
+        {deleteTarget && (
+          <div className="space-y-5">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 leading-relaxed">
+              Warning: This action will permanently delete this business profile along with all associated jobs, clients, and invoice records from the Supabase database.
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-sm text-zinc-600">
+                Type <span className="font-semibold text-zinc-800">{deleteTarget.name}</span> to confirm:
+              </p>
+              <input
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder="Enter business name"
+                className="w-full border border-zinc-200 focus:border-red-400 rounded-xl px-4 py-3 text-sm bg-zinc-50/50 outline-none transition-all"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-1">
+              <Button variant="ghost" onClick={() => { setDeleteTarget(null); setConfirmText(""); }}>
+                Cancel
+              </Button>
+              <button
+                onClick={handleDelete}
+                disabled={confirmText !== deleteTarget.name || deleting}
+                className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-xl bg-red-500 text-white hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-[0.97]"
+              >
+                {deleting ? (
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                ) : (
+                  "Confirm Permanent Deletion"
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
