@@ -71,9 +71,9 @@ export default function InvoiceBuilder({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="print-header flex items-start justify-between">
         <div>
-          <h2 className="font-serif text-2xl font-bold text-[var(--text-primary)]">{invoiceNumber}</h2>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">{invoiceNumber}</h2>
           <div className="flex items-center gap-4 mt-2">
             <div>
               <label className="text-xs text-[var(--text-muted)]">Invoice Date</label>
@@ -81,16 +81,11 @@ export default function InvoiceBuilder({
             </div>
             <div>
               <label className="text-xs text-[var(--text-muted)]">Due Date</label>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="bg-transparent text-sm text-[var(--text-primary)] border-b border-[var(--border)] focus:border-[var(--primary)] outline-none"
-              />
+              <p className="text-sm text-[var(--text-primary)]">{dueDate ? new Date(dueDate).toLocaleDateString("en-KE") : "—"}</p>
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="no-print flex gap-2">
           {onPrint && <Button variant="secondary" size="sm" onClick={onPrint}>Print</Button>}
           {onSend && <Button size="sm" onClick={onSend} loading={loading}>Send to Client</Button>}
           <Button variant="secondary" size="sm" onClick={handleSave} loading={loading}>Save Draft</Button>
@@ -100,27 +95,32 @@ export default function InvoiceBuilder({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <div className="card-surface p-5">
-            <div className="grid grid-cols-12 gap-3 mb-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-              <div className="col-span-5">Description</div>
-              <div className="col-span-2">Qty</div>
-              <div className="col-span-3">Unit Price</div>
-              <div className="col-span-1 text-right">Total</div>
-              <div className="col-span-1" />
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  <th className="pb-3 text-left w-[52%]">Description</th>
+                  <th className="pb-3 text-left w-[13%]">Qty</th>
+                  <th className="pb-3 text-left w-[18%]">Unit Price</th>
+                  <th className="pb-3 text-right w-[17%]">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((item, i) => (
+                  <LineItemRow
+                    key={item.id}
+                    item={item}
+                    index={i}
+                    onChange={handleItemChange}
+                    onRemove={removeItem}
+                  />
+                ))}
+              </tbody>
+            </table>
+            <div className="no-print">
+              <Button variant="ghost" size="sm" onClick={addItem} className="mt-3">
+                + Add Line Item
+              </Button>
             </div>
-            <div className="space-y-2">
-              {items.map((item, i) => (
-                <LineItemRow
-                  key={item.id}
-                  item={item}
-                  index={i}
-                  onChange={handleItemChange}
-                  onRemove={removeItem}
-                />
-              ))}
-            </div>
-            <Button variant="ghost" size="sm" onClick={addItem} className="mt-3">
-              + Add Line Item
-            </Button>
           </div>
 
           <div className="card-surface p-5 space-y-4">
@@ -129,7 +129,7 @@ export default function InvoiceBuilder({
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="print-summary space-y-4">
           <InvoiceSummary
             subtotal={subtotal}
             taxRate={16}
@@ -139,11 +139,13 @@ export default function InvoiceBuilder({
             amountPaid={0}
             balanceDue={total}
           />
-          {onRecordPayment && (
-            <Button variant="secondary" className="w-full" onClick={onRecordPayment}>
-              Record Payment
-            </Button>
-          )}
+          <div className="no-print">
+            {onRecordPayment && (
+              <Button variant="secondary" className="w-full" onClick={onRecordPayment}>
+                Record Payment
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>
