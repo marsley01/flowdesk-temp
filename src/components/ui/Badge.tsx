@@ -15,7 +15,7 @@ export default function Badge({ children, className, variant = "default" }: Badg
         variant === "success" && "bg-[var(--success-muted)] text-[var(--success)] border-[var(--success)]/20",
         variant === "warning" && "bg-[var(--warning-muted)] text-[var(--warning)] border-[var(--warning)]/20",
         variant === "error" && "bg-[var(--error-muted)] text-[var(--error)] border-[var(--error)]/20",
-        variant === "info" && "bg-blue-500/10 text-blue-400 border-blue-500/20",
+        variant === "info" && "bg-blue-50 text-blue-600 border-blue-200",
         className
       )}
     >

@@ -152,7 +152,7 @@ export default function NewJobPage() {
                           <button
                             key={c.id}
                             type="button"
-                            className="w-full text-left px-3 py-2.5 text-sm text-[var(--text-primary)] hover:bg-white/5 transition-colors flex items-center gap-3"
+                            className="w-full text-left px-3 py-2.5 text-sm text-[var(--text-primary)] hover:bg-blue-50/50 transition-colors flex items-center gap-3"
                             onClick={() => selectClient(c)}
                           >
                             <div className="w-8 h-8 rounded-full bg-[var(--primary-muted)] flex items-center justify-center text-[var(--primary)] font-bold text-xs">

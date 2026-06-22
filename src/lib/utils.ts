@@ -40,35 +40,35 @@ export function getInitials(name: string): string {
 
 export function getStatusColor(status: JobStatus): string {
   const colors: Record<JobStatus, string> = {
-    received: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    diagnosed: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-    in_progress: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-    quality_check: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
-    ready: "bg-green-500/10 text-green-400 border-green-500/20",
-    delivered: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-    cancelled: "bg-red-500/10 text-red-400 border-red-500/20",
+    received: "bg-blue-50 text-blue-600 border-blue-200",
+    diagnosed: "bg-purple-50 text-purple-600 border-purple-200",
+    in_progress: "bg-amber-50 text-amber-600 border-amber-200",
+    quality_check: "bg-cyan-50 text-cyan-600 border-cyan-200",
+    ready: "bg-green-50 text-green-600 border-green-200",
+    delivered: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    cancelled: "bg-red-50 text-red-600 border-red-200",
   };
   return colors[status];
 }
 
 export function getPriorityColor(priority: JobPriority): string {
   const colors: Record<JobPriority, string> = {
-    low: "bg-slate-500/10 text-slate-400 border-slate-500/20",
-    normal: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    high: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-    urgent: "bg-red-500/10 text-red-400 border-red-500/20",
+    low: "bg-slate-50 text-slate-500 border-slate-200",
+    normal: "bg-blue-50 text-blue-600 border-blue-200",
+    high: "bg-orange-50 text-orange-600 border-orange-200",
+    urgent: "bg-red-50 text-red-600 border-red-200",
   };
   return colors[priority];
 }
 
 export function getInvoiceStatusColor(status: string): string {
   const colors: Record<string, string> = {
-    draft: "bg-slate-500/10 text-slate-400 border-slate-500/20",
-    sent: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    partially_paid: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-    paid: "bg-green-500/10 text-green-400 border-green-500/20",
-    overdue: "bg-red-500/10 text-red-400 border-red-500/20",
-    cancelled: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+    draft: "bg-slate-50 text-slate-500 border-slate-200",
+    sent: "bg-blue-50 text-blue-600 border-blue-200",
+    partially_paid: "bg-amber-50 text-amber-600 border-amber-200",
+    paid: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    overdue: "bg-red-50 text-red-600 border-red-200",
+    cancelled: "bg-slate-50 text-slate-500 border-slate-200",
   };
   return colors[status] || colors.draft;
 }

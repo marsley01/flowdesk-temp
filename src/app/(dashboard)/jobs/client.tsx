@@ -106,7 +106,7 @@ export default function JobsClient({ jobs }: JobsClientProps) {
                 </thead>
                 <tbody>
                   {filtered.map((job) => (
-                    <tr key={job.id} className="border-b border-[var(--border)] hover:bg-white/[0.02] transition-colors">
+                    <tr key={job.id} className="border-b border-[var(--border)] hover:bg-blue-50/30 transition-colors">
                       <td className="p-4 text-sm text-[var(--text-primary)] font-mono">{job.job_number}</td>
                       <td className="p-4 text-sm text-[var(--text-primary)] font-medium">{job.title}</td>
                       <td className="p-4 text-sm text-[var(--text-muted)]">{job.clients?.name || "—"}</td>

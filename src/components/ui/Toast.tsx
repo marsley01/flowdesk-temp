@@ -43,10 +43,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               className={cn(
-                "px-4 py-3 rounded-[8px] text-sm font-medium shadow-lg backdrop-blur-[12px] border min-w-[280px] max-w-[400px]",
+                "px-4 py-3 rounded-[8px] text-sm font-medium shadow-lg border min-w-[280px] max-w-[400px]",
                 toast.type === "success" && "bg-[var(--success-muted)] text-[var(--success)] border-[var(--success)]/20",
                 toast.type === "error" && "bg-[var(--error-muted)] text-[var(--error)] border-[var(--error)]/20",
-                toast.type === "info" && "bg-blue-500/10 text-blue-400 border-blue-500/20",
+                toast.type === "info" && "bg-blue-50 text-blue-600 border-blue-200",
                 toast.type === "warning" && "bg-[var(--warning-muted)] text-[var(--warning)] border-[var(--warning)]/20"
               )}
             >

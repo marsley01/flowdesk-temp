@@ -33,7 +33,7 @@ export default function AttachmentGrid({ attachments, uploading }: AttachmentGri
                 <p className="text-sm text-[var(--text-primary)] truncate">{att.file_name}</p>
                 <p className={cn(
                   "text-[10px] font-medium mt-0.5",
-                  att.uploader === "client" ? "text-blue-400" : "text-[var(--text-muted)]"
+                  att.uploader === "client" ? "text-[var(--primary)]" : "text-[var(--text-muted)]"
                 )}>
                   {att.uploader === "client" ? "Client" : "Staff"}
                 </p>
