@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Topbar from "@/components/dashboard/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MagnifyingGlass,
@@ -142,7 +143,7 @@ const stagger = {
 function Grain() {
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-[60] opacity-[0.015]"
+      className="pointer-events-none fixed inset-0 z-50 opacity-[0.015]"
       style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         backgroundRepeat: "repeat",
@@ -164,44 +165,6 @@ function BezelCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ─────────── Top Nav ─────────── */
-
-function TopNav() {
-  return (
-    <header className="sticky top-0 z-50 bg-[#2563EB] text-white shadow-[0_1px_0_rgba(255,255,255,0.08)]">
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 lg:px-10">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/12">
-            <CurrencyCircleDollar size={20} weight="bold" />
-          </div>
-          <span className="text-lg font-semibold tracking-tight">Invoice Tracker</span>
-        </div>
-
-        <div className="hidden items-center gap-4 sm:flex">
-          <div className="relative">
-            <MagnifyingGlass size={16} weight="light" className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-200" />
-            <input
-              type="text"
-              placeholder="Search invoices..."
-              className="w-56 rounded-full bg-white/12 py-2 pl-10 pr-4 text-sm text-white placeholder-blue-200/70 outline-none ring-1 ring-white/10 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] focus:w-72 focus:bg-white/15 focus:ring-white/25"
-            />
-          </div>
-          <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-blue-200 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
-            <Bell size={18} weight="light" />
-          </button>
-          <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-blue-200 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
-            <UserCircle size={18} weight="light" />
-          </button>
-        </div>
-
-        <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-blue-200 sm:hidden">
-          <MagnifyingGlass size={18} weight="light" />
-        </button>
-      </div>
-    </header>
-  );
-}
-
 /* ─────────── Sub-Header ─────────── */
 
 function SubHeader({
@@ -217,7 +180,7 @@ function SubHeader({
   ];
 
   return (
-    <div className="sticky top-16 z-40 border-b border-zinc-200/50 bg-white/90 backdrop-blur-xl">
+    <div className="sticky top-14 z-40 border-b border-zinc-200/50 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-6 lg:px-10">
         <div className="flex items-center gap-1.5 rounded-full bg-zinc-100 p-1">
           {tabs.map((t) => (
@@ -658,9 +621,9 @@ export default function InvoiceTrackerPage() {
   const [viewMode, setViewMode] = useState<"analytics" | "gallery">("analytics");
 
   return (
-    <div className="min-h-[100dvh] bg-[#F4F4F5] font-sans antialiased">
+    <div className="min-h-[100dvh]">
       <Grain />
-      <TopNav />
+      <Topbar />
       <SubHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
       <main className="mx-auto max-w-[1440px] px-4 py-8 lg:px-10 lg:py-10">

@@ -24,7 +24,7 @@ export default function Topbar() {
         </Button>
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors px-2.5 py-1.5 rounded-md hover:bg-white/[0.03]"
+          className="flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors px-2.5 py-1.5 rounded-md hover:bg-blue-50/50"
         >
           <SignOut weight="regular" className="text-base" />
           Sign out

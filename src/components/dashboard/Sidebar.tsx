@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Cube, House, Wrench, Users, Gear } from "@phosphor-icons/react";
+import { Cube, House, Wrench, Users, Gear, CurrencyCircleDollar } from "@phosphor-icons/react";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: House },
   { label: "Jobs", href: "/jobs", icon: Wrench },
   { label: "Clients", href: "/clients", icon: Users },
+  { label: "Invoice Tracker", href: "/invoice-tracker", icon: CurrencyCircleDollar },
   { label: "Settings", href: "/settings", icon: Gear },
 ];
 
@@ -37,7 +38,7 @@ export default function Sidebar() {
                 "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200",
                 isActive
                   ? "bg-[var(--primary-muted)] text-[var(--primary)]"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/[0.03]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-blue-50/50"
               )}
             >
               <Icon weight={isActive ? "fill" : "regular"} className="text-lg" />

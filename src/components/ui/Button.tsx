@@ -19,7 +19,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           "inline-flex items-center justify-center font-medium transition-all duration-200 rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/50 disabled:opacity-50 disabled:cursor-not-allowed",
           variant === "primary" && "bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)] shadow-glow",
           variant === "secondary" && "bg-[var(--surface-raised)] text-[var(--text-primary)] border border-[var(--border)] hover:border-[var(--border-active)]",
-          variant === "ghost" && "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5",
+          variant === "ghost" && "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-blue-50/50",
           variant === "danger" && "bg-[var(--error)] text-white hover:bg-red-600",
           variant === "success" && "bg-[var(--success)] text-white hover:bg-green-600",
           size === "sm" && "px-3 py-1.5 text-xs gap-1.5",

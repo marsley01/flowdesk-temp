@@ -87,7 +87,7 @@ export default function DashboardClient({
                     </thead>
                     <tbody>
                       {recentJobs.map((job) => (
-                        <tr key={job.id} className="border-b border-[var(--border)] hover:bg-white/[0.02] transition-colors">
+                        <tr key={job.id} className="border-b border-[var(--border)] hover:bg-blue-50/30 transition-colors">
                           <td className="py-3 text-sm text-[var(--text-primary)] font-mono">{job.job_number}</td>
                           <td className="py-3 text-sm text-[var(--text-primary)]">{job.title}</td>
                           <td className="py-3 text-sm text-[var(--text-muted)]">{job.client_name}</td>

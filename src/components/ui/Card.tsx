@@ -13,7 +13,6 @@ export default function Card({ children, className, raised, onClick }: CardProps
       onClick={onClick}
       className={cn(
         raised ? "card-surface-raised" : "card-surface",
-        "backdrop-blur-[12px]",
         onClick && "cursor-pointer hover:border-[var(--border-active)] transition-colors",
         className
       )}
