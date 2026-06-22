@@ -1,8 +1,11 @@
 {
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "regions": ["arn1"],
   "crons": [
     {
       "path": "/api/ping",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 6 * * *"
     }
   ]
 }
