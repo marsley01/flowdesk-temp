@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { FileText, Lightning, CurrencyCircleDollar, WarningCircle, UserPlus } from "@phosphor-icons/react";
+import { FileText, Lightning, CurrencyCircleDollar, WarningCircle, UserPlus, Clock } from "@phosphor-icons/react";
 import Topbar from "@/components/dashboard/Topbar";
 import StatsCard from "@/components/dashboard/StatsCard";
 import JobStatusBadge from "@/components/jobs/JobStatusBadge";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import { cn, formatKES, formatDate, getPriorityColor } from "@/lib/utils";
+import { cn, formatKES, formatDate, formatRelativeDate, getPriorityColor } from "@/lib/utils";
 import type { DailyRevenue, JobStatus, JobPriority } from "@/types";
 
 const RevenueChart = dynamic(() => import("@/components/dashboard/RevenueChart"), { ssr: false });
@@ -20,7 +20,14 @@ interface RecentJob {
   client_name: string;
   status: JobStatus;
   priority: JobPriority;
-  due_date: string | null;
+  due_date: string;
+}
+
+interface UrgentJob {
+  id: string;
+  job_number: string;
+  title: string;
+  due_date: string;
 }
 
 interface RecentSubmission {
@@ -41,11 +48,12 @@ interface DashboardClientProps {
   outstandingBalance: number;
   recentJobs: RecentJob[];
   revenueData: DailyRevenue[];
+  urgentJobs: UrgentJob[];
   recentSubmissions: RecentSubmission[];
 }
 
 export default function DashboardClient({
-  totalJobs, activeJobs, revenueThisMonth, outstandingBalance, recentJobs, revenueData, recentSubmissions,
+  totalJobs, activeJobs, revenueThisMonth, outstandingBalance, recentJobs, revenueData, urgentJobs, recentSubmissions,
 }: DashboardClientProps) {
   return (
     <div>
@@ -109,7 +117,18 @@ export default function DashboardClient({
                               {job.priority}
                             </span>
                           </td>
-                          <td className="py-3 text-sm text-[var(--text-muted)]">{formatDate(job.due_date)}</td>
+                          <td className="py-3 text-sm">
+                            <span className={cn(
+                              "text-xs font-medium",
+                              job.due_date && new Date(job.due_date) < new Date()
+                                ? "text-red-500"
+                                : job.priority === "urgent"
+                                ? "text-orange-600"
+                                : "text-[var(--text-muted)]"
+                            )}>
+                              {formatRelativeDate(job.due_date)}
+                            </span>
+                          </td>
                           <td className="py-3 text-sm text-right">
                             <Link href={`/jobs/${job.id}`} className="text-[var(--primary)] hover:underline text-xs">View</Link>
                           </td>
@@ -157,11 +176,37 @@ export default function DashboardClient({
             )}
           </div>
 
-          <div>
+          <div className="space-y-6">
             <Card className="p-5">
               <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Revenue (7 days)</h2>
               <RevenueChart data={revenueData} />
             </Card>
+
+            {urgentJobs.length > 0 && (
+              <Card className="p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <Clock weight="duotone" className="text-lg text-orange-500" />
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">Urgent Deadlines</h2>
+                </div>
+                <div className="space-y-0">
+                  {urgentJobs.map((job, i) => (
+                    <Link
+                      key={job.id}
+                      href={`/jobs/${job.id}`}
+                      className={`flex items-center justify-between py-2.5 ${i < urgentJobs.length - 1 ? "border-b border-zinc-50" : ""} hover:bg-zinc-50/50 -mx-5 px-5 transition-colors`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-[var(--text-primary)] truncate">{job.title}</p>
+                        <p className="text-xs text-zinc-400 font-mono mt-0.5">{job.job_number}</p>
+                      </div>
+                      <span className="text-xs font-medium text-orange-600 whitespace-nowrap ml-3">
+                        {formatRelativeDate(job.due_date)}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </Card>
+            )}
           </div>
         </div>
       </main>

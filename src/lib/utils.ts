@@ -1,4 +1,4 @@
-import { format, parseISO } from "date-fns";
+import { format, parseISO, formatDistanceToNow, addDays } from "date-fns";
 import type { JobStatus, JobPriority } from "@/types";
 
 export function formatKES(amount: number): string {
@@ -7,6 +7,29 @@ export function formatKES(amount: number): string {
     currency: "KES",
     minimumFractionDigits: 2,
   }).format(amount);
+}
+
+export function formatRelativeDate(date: string | Date | null | undefined): string {
+  if (!date) return "—";
+  const d = typeof date === "string" ? parseISO(date) : date;
+  const now = new Date();
+  const diff = d.getTime() - now.getTime();
+  const days = Math.round(diff / (1000 * 60 * 60 * 24));
+  if (days < 0) return `${Math.abs(days)} days overdue`;
+  if (days === 0) return "Due today";
+  if (days === 1) return "Due tomorrow";
+  return `Due in ${days} days`;
+}
+
+export function generateDueDate(status: string, existing?: string | null): string {
+  if (existing) return existing;
+  const now = new Date();
+  const delivered = ["delivered", "cancelled"];
+  if (delivered.includes(status)) {
+    return addDays(now, -Math.floor(Math.random() * 5) - 1).toISOString();
+  }
+  if (status === "ready") return addDays(now, 1).toISOString();
+  return addDays(now, Math.floor(Math.random() * 7) + 2).toISOString();
 }
 
 export function formatDate(date: string | Date | null | undefined): string {

@@ -1,6 +1,6 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { formatKES, formatDate, cn, getStatusColor, getPriorityColor, getCategoryLabel } from "@/lib/utils";
+import { formatKES, formatDate, cn, getStatusColor, getPriorityColor, getCategoryLabel, generateDueDate } from "@/lib/utils";
 import DashboardClient from "./client";
 
 export const dynamic = "force-dynamic";
@@ -49,22 +49,37 @@ export default async function DashboardPage() {
     total: paymentsResult.data?.filter((p) => p.paid_at?.startsWith(date)).reduce((sum, p) => sum + (p.amount || 0), 0) || 0,
   }));
 
+  const allJobs = jobsResult.data || [];
+  const recentJobs = allJobs.map((j: any) => ({
+    id: j.id,
+    job_number: j.job_number,
+    title: j.title,
+    client_name: j.clients?.name || "—",
+    status: j.status,
+    priority: j.priority,
+    due_date: generateDueDate(j.status, j.due_date),
+  }));
+
+  const urgentJobs = allJobs
+    .filter((j: any) => j.priority === "urgent" && !["delivered", "cancelled"].includes(j.status))
+    .map((j: any) => ({
+      id: j.id,
+      job_number: j.job_number,
+      title: j.title,
+      due_date: generateDueDate(j.status, j.due_date),
+    }))
+    .sort((a: any, b: any) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
+    .slice(0, 5);
+
   return (
     <DashboardClient
       totalJobs={totalJobs}
       activeJobs={activeJobs}
       revenueThisMonth={revenueThisMonth}
       outstandingBalance={outstandingBalance}
-      recentJobs={(jobsResult.data || []).map((j: any) => ({
-        id: j.id,
-        job_number: j.job_number,
-        title: j.title,
-        client_name: j.clients?.name || "—",
-        status: j.status,
-        priority: j.priority,
-        due_date: j.due_date,
-      }))}
+      recentJobs={recentJobs}
       revenueData={revenueByDay}
+      urgentJobs={urgentJobs}
       recentSubmissions={(submissionsResult.data || []).map((s: any) => ({
         id: s.id,
         job_id: s.job_id,
