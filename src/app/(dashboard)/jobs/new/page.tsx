@@ -25,7 +25,7 @@ interface ClientResult {
 
 export default function NewJobPage() {
   const router = useRouter();
-  const supabase = createClient();
+  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null);
   const { addToast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [clients, setClients] = useState<ClientResult[]>([]);
@@ -50,6 +50,11 @@ export default function NewJobPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const getSupabase = () => {
+    if (!supabaseRef.current) supabaseRef.current = createClient();
+    return supabaseRef.current;
+  };
+
   const searchClients = async (term: string) => {
     setSearchTerm(term);
     if (term.length < 1) {
@@ -58,13 +63,14 @@ export default function NewJobPage() {
       return;
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const sb = getSupabase();
+    const { data: { user } } = await sb.auth.getUser();
     if (!user) return;
 
-    const { data: bu } = await supabase.from("business_users").select("business_id").eq("user_id", user.id).single();
+    const { data: bu } = await sb.from("business_users").select("business_id").eq("user_id", user.id).single();
     if (!bu) return;
 
-    const { data } = await supabase
+    const { data } = await sb
       .from("clients")
       .select("id, name, email, phone, company")
       .eq("business_id", bu.business_id)
